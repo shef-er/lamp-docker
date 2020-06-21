@@ -1,0 +1,49 @@
+version: '3.7'
+
+networks:
+  frontend:
+  backend:
+
+services:
+
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    # restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - backend
+
+  php:
+    build:
+      context: ./docker/php
+      network: host
+    volumes:
+      - './www/:/var/www/'
+    environment:
+      docker: 'true'
+    networks:
+      - backend
+    ports:
+      - 9000:9000
+
+  httpd:
+    build:
+      context: ./docker/httpd
+      network: host
+    volumes:
+      - ./www/:/var/www/
+      - ./docker/httpd/sites-enabled/:/etc/apache2/sites-enabled/
+    networks:
+      - frontend
+      - backend
+    ports:
+      - 80:80
+      - 443:443
+
+  adminer:
+    image: adminer
+    # restart: always
+    ports:
+      - 8080:8080
