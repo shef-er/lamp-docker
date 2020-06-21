@@ -19,6 +19,9 @@ services:
     build:
       context: ./docker/php
       network: host
+      # args:
+      #   UID: 1000
+      #   GID: 1000
     volumes:
       - './www/:/var/www/'
     environment:
@@ -32,9 +35,12 @@ services:
     build:
       context: ./docker/httpd
       network: host
+    depends_on:
+        - php
+        - db
     volumes:
-      - ./www/:/var/www/
-      - ./docker/httpd/sites-enabled/:/etc/apache2/sites-enabled/
+      - './www/:/var/www/'
+      - './docker/httpd/sites-enabled/:/etc/apache2/sites-enabled/'
     networks:
       - frontend
       - backend
@@ -44,6 +50,10 @@ services:
 
   adminer:
     image: adminer
+    depends_on:
+        - db
     # restart: always
+    networks:
+      - backend
     ports:
       - 8080:8080

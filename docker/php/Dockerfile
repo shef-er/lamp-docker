@@ -28,6 +28,9 @@ RUN set -ex \
 RUN wget https://getcomposer.org/installer -O - -q \
     | php -- --install-dir=/bin --filename=composer --quiet
 
+RUN apk --no-cache add shadow \
+    && usermod -u 1000 www-data
+
 EXPOSE 9000
 
 CMD ["php-fpm"]
