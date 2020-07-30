@@ -6,22 +6,30 @@ networks:
 
 services:
 
-  db:
+  dbapp:
+    container_name: "lamp-dbapp"
     image: mysql
+    restart: unless-stopped
     command: --default-authentication-plugin=mysql_native_password
-    # restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
     networks:
       - backend
+    ports:
+      - "3306:3306"
 
   php:
+    container_name: "lamp-php"
     build:
-      context: ./docker/php
+      context: ./.docker/php
       network: host
-      # args:
-      #   UID: 1000
-      #   GID: 1000
+      args:
+        USER_ID:  1000
+        GROUP_ID: 1000
+    restart: unless-stopped
+#    working_dir: /web
+    depends_on:
+      - dbapp
     volumes:
       - './www/:/var/www/'
     environment:
@@ -32,15 +40,16 @@ services:
       - 9000:9000
 
   httpd:
+    container_name: "lamp-httpd"
     build:
-      context: ./docker/httpd
+      context: ./.docker/httpd
       network: host
     depends_on:
         - php
-        - db
+        - dbapp
     volumes:
       - './www/:/var/www/'
-      - './docker/httpd/sites-enabled/:/etc/apache2/sites-enabled/'
+      - './.docker/httpd/sites-enabled/:/etc/apache2/sites-enabled/'
     networks:
       - frontend
       - backend
@@ -49,9 +58,10 @@ services:
       - 443:443
 
   adminer:
+    container_name: "lamp-adminer"
     image: adminer
     depends_on:
-        - db
+        - dbapp
     # restart: always
     networks:
       - backend
