@@ -27,11 +27,10 @@ services:
         USER_ID:  1000
         GROUP_ID: 1000
     restart: unless-stopped
-#    working_dir: /web
     depends_on:
       - dbapp
     volumes:
-      - './www/:/var/www/'
+      - './:/web/'
     environment:
       docker: 'true'
     networks:
@@ -44,11 +43,12 @@ services:
     build:
       context: ./.docker/httpd
       network: host
+    restart: unless-stopped
     depends_on:
         - php
         - dbapp
     volumes:
-      - './www/:/var/www/'
+      - './:/web/'
       - './.docker/httpd/sites-enabled/:/etc/apache2/sites-enabled/'
     networks:
       - frontend
@@ -56,14 +56,3 @@ services:
     ports:
       - 80:80
       - 443:443
-
-  adminer:
-    container_name: "lamp-adminer"
-    image: adminer
-    depends_on:
-        - dbapp
-    # restart: always
-    networks:
-      - backend
-    ports:
-      - 8080:8080

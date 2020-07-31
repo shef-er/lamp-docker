@@ -34,8 +34,5 @@ RUN echo Asia/Yekaterinburg > /etc/timezone \
 RUN ln -sf /dev/stdout /var/log/apache2/access.log && \
     ln -sf /dev/stderr /var/log/apache2/error.log
 
-# RUN rm /etc/apache2/sites-enabled/000-default.conf && \
-#     rm /etc/apache2/sites-available/000-default.conf
-
 CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
 
