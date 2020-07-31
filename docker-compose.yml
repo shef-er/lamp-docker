@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 
 networks:
   frontend:
@@ -16,7 +16,7 @@ services:
     networks:
       - backend
     ports:
-      - "3306:3306"
+      - 3306:3306
 
   php:
     container_name: "lamp-php"
@@ -30,9 +30,9 @@ services:
     depends_on:
       - dbapp
     volumes:
-      - './:/web/'
+      - "./:/web/"
     environment:
-      docker: 'true'
+      docker: "true"
     networks:
       - backend
     ports:
@@ -48,8 +48,8 @@ services:
         - php
         - dbapp
     volumes:
-      - './:/web/'
-      - './.docker/httpd/sites-enabled/:/etc/apache2/sites-enabled/'
+      - "./:/web/"
+      - "./.docker/httpd/sites-enabled/:/etc/apache2/sites-enabled/"
     networks:
       - frontend
       - backend
