@@ -1,7 +1,6 @@
 FROM php:7.4-fpm-alpine
 
-ARG USER_ID
-ARG GROUP_ID
+MAINTAINER Ernest Shefer <shef-er@ya.ru>
 
 RUN set -ex \
     && apk --no-cache add libzip-dev curl-dev libpng-dev libxslt-dev icu-dev
@@ -33,14 +32,18 @@ RUN set -ex \
 RUN wget https://getcomposer.org/installer -O - -q \
     | php -- --install-dir=/bin --filename=composer --quiet
 
+RUN echo "xdebug.remote_enable=1" >> /usr/local/etc/php/php.ini \
+    && echo "xdebug.remote_port=\"9000\"" >> /usr/local/etc/php/php.ini
+
+
+ARG USER_ID
+ARG GROUP_ID
+
 RUN apk --no-cache add shadow \
     && usermod -u ${USER_ID} www-data \
     && groupmod -g ${GROUP_ID} www-data
 
-WORKDIR /var/www
-
 USER "${USER_ID}:${GROUP_ID}"
 
-EXPOSE 9000
 
-CMD ["php-fpm"]
+WORKDIR /web
