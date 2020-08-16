@@ -27,23 +27,23 @@ RUN set -ex \
     && docker-php-ext-install json \
     && docker-php-ext-install xsl \
     && docker-php-ext-install intl \
-    && docker-php-ext-install zip
+    && docker-php-ext-install zip \
+    && docker-php-ext-install opcache
 
 RUN wget https://getcomposer.org/installer -O - -q \
     | php -- --install-dir=/bin --filename=composer --quiet
 
-RUN echo "xdebug.remote_enable=1" >> /usr/local/etc/php/php.ini \
-    && echo "xdebug.remote_port=\"9000\"" >> /usr/local/etc/php/php.ini
+ADD php.ini /usr/local/etc/php/php.ini
 
 
 ARG DC_USER_ID
 ARG DC_GROUP_ID
 
 RUN apk --no-cache add shadow \
-    && usermod -u ${DC_USER_ID} www-data \
-    && groupmod -g ${DC_GROUP_ID} www-data
+    && usermod -u $DC_USER_ID www-data \
+    && groupmod -g $DC_GROUP_ID www-data
 
-USER "${DC_USER_ID}:${DC_GROUP_ID}"
+USER "$DC_USER_ID:$DC_GROUP_ID"
 
 
 WORKDIR /web

@@ -41,12 +41,8 @@ services:
       - "./:/web/"
     environment:
       docker: "true"
-#      XDEBUG_CONFIG: "remote_enable=1"
-#      PHP_IDE_CONFIG: "serverName=Docker"
     networks:
       - backend
-    ports:
-      - 9000:9000
 
   httpd:
     container_name: "lamp-httpd"
@@ -54,15 +50,15 @@ services:
       context: .docker/httpd
       network: host
     depends_on:
-        - php
-        - mysql
+      - php
+      - mysql
     restart: unless-stopped
     volumes:
       - "./:/web/"
       - "./.docker/httpd/sites-enabled/:/etc/apache2/sites-enabled/"
     networks:
-      - frontend
       - backend
+      - frontend
     ports:
       - 80:80
       - 443:443
